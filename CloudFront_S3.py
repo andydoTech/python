@@ -1,7 +1,7 @@
 from troposphere import GetAtt, Join, Output
 from troposphere import Parameter, Ref, Template
 from troposphere.cloudfront import Distribution, DistributionConfig
-from troposphere.cloudfront import Origin, DefaultCacheBehavior, ForwardedValues, S3Origin, CustomOrigin
+from troposphere.cloudfront import Origin, DefaultCacheBehavior, ForwardedValues, S3Origin, CustomOrigin, CacheBehavior
 
 
 t = Template()
@@ -171,6 +171,71 @@ myDistribution = t.add_resource(Distribution(
                 ],
 		Aliases=[Ref(aliascname)], 
 
+                CacheBehaviors=(
+                    [CacheBehavior(
+                        PathPattern="/api/account",
+                        TargetOriginId=Ref(origin_2),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/report",
+                        TargetOriginId=Ref(origin_3),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/alerts",
+                        TargetOriginId=Ref(origin_4),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/benefits",
+                        TargetOriginId=Ref(origin_5),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/enrollment",
+                        TargetOriginId=Ref(origin_6),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/fulfillment",
+                        TargetOriginId=Ref(origin_7),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/offers",
+                        TargetOriginId=Ref(origin_8),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/profile",
+                        TargetOriginId=Ref(origin_9),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    ),
+                    CacheBehavior(
+                        PathPattern="/api/registration",
+                        TargetOriginId=Ref(origin_10),
+                        ViewerProtocolPolicy="allow-all",
+                        ForwardedValues=ForwardedValues(
+                        QueryString="true")
+                    )]
+                ),
 
         DefaultCacheBehavior=DefaultCacheBehavior(
             TargetOriginId=Ref(s3origin),
