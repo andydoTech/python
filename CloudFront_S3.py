@@ -25,79 +25,117 @@ s3origin = t.add_parameter(Parameter(
     "S3Origin",
     Type="String",
 ))
-origin_2 = t.add_parameter(Parameter(
-    "originTWO",
+origin_account = t.add_parameter(Parameter(
+    "originACCOUNT",
     Type="String",
 ))
-origin_3 = t.add_parameter(Parameter(
-    "originTHREE",
+origin_report = t.add_parameter(Parameter(
+    "originREPORT",
     Type="String",
 ))
-origin_4 = t.add_parameter(Parameter(
-    "originFOUR",
+origin_alerts = t.add_parameter(Parameter(
+    "originALERTS",
     Type="String",
 ))
-origin_5 = t.add_parameter(Parameter(
-    "originFIVE",
+origin_benefits = t.add_parameter(Parameter(
+    "originBENEFITS",
     Type="String",
 ))
-origin_6 = t.add_parameter(Parameter(
-    "originSIX",
+origin_enrollment = t.add_parameter(Parameter(
+    "originENROLLMENT",
     Type="String",
 ))
-origin_7 = t.add_parameter(Parameter(
-    "originSEVEN",
+origin_fulfillment = t.add_parameter(Parameter(
+    "originFULFILLMENT",
     Type="String",
 ))
-origin_8 = t.add_parameter(Parameter(
-    "originEIGHT",
+origin_offers = t.add_parameter(Parameter(
+    "originOFFERS",
     Type="String",
 ))
-origin_9 = t.add_parameter(Parameter(
-    "originNINE",
+origin_profile = t.add_parameter(Parameter(
+    "originPROFILE",
     Type="String",
 ))
-origin_10 = t.add_parameter(Parameter(
-    "originTEN",
+origin_registration = t.add_parameter(Parameter(
+    "originREGISTRATION",
     Type="String",
 ))
 # DNS Names
-dnsname_2 = t.add_parameter(Parameter(
-    "dnsTWO",
+dns_account = t.add_parameter(Parameter(
+    "dnsACCOUNT",
     Type="String",
 ))
-dnsname_3 = t.add_parameter(Parameter(
-    "dnsTHREE",
+dns_report = t.add_parameter(Parameter(
+    "dnsREPORT",
     Type="String",
 ))
-dnsname_4 = t.add_parameter(Parameter(
-    "dnsFOUR",
+dns_alerts = t.add_parameter(Parameter(
+    "dnsALERTS",
     Type="String",
 ))
-dnsname_5 = t.add_parameter(Parameter(
-    "dnsFIVE",
+dns_benefits = t.add_parameter(Parameter(
+    "dnsBENEFITS",
     Type="String",
 ))
-dnsname_6 = t.add_parameter(Parameter(
-    "dnsSIX",
+dns_enrollment = t.add_parameter(Parameter(
+    "dnsENROLLMENT",
     Type="String",
 ))
-dnsname_7 = t.add_parameter(Parameter(
-    "dnsSEVEN",
+dns_fulfillment = t.add_parameter(Parameter(
+    "dnsFULFILLMENT",
     Type="String",
 ))
-dnsname_8 = t.add_parameter(Parameter(
-    "dnsEIGHT",
+dns_offers = t.add_parameter(Parameter(
+    "dnsOFFERS",
     Type="String",
 ))
-dnsname_9 = t.add_parameter(Parameter(
-    "dnsNINE",
+dns_profile = t.add_parameter(Parameter(
+    "dnsPROFILE",
     Type="String",
 ))
-dnsname_10 = t.add_parameter(Parameter(
-    "dnsTEN",
+dns_registration = t.add_parameter(Parameter(
+    "dnsREGISTRATION",
     Type="String",
 ))
+# Behaviors
+behavior_account = t.add_parameter(Parameter(
+    "behaviorACCOUNT",
+    Type="String",
+))
+behavior_report = t.add_parameter(Parameter(
+    "behaviorREPORT",
+    Type="String",
+))
+behavior_alerts = t.add_parameter(Parameter(
+    "behaviorALERTS",
+    Type="String",
+))
+behavior_benefits = t.add_parameter(Parameter(
+    "behaviorBENEFITS",
+    Type="String",
+))
+behavior_enrollment = t.add_parameter(Parameter(
+    "behaviorENROLLMENT",
+    Type="String",
+))
+behavior_fulfillment = t.add_parameter(Parameter(
+    "behaviorFULFILLMENT",
+    Type="String",
+))
+behavior_offers = t.add_parameter(Parameter(
+    "behaviorOFFERS",
+    Type="String",
+))
+behavior_profile = t.add_parameter(Parameter(
+    "behaviorPROFILE",
+    Type="String",
+))
+behavior_registration = t.add_parameter(Parameter(
+    "behaviorREGISTRATION",
+    Type="String",
+))
+
 
 myDistribution = t.add_resource(Distribution(
     "myDistribution",
@@ -106,64 +144,64 @@ myDistribution = t.add_resource(Distribution(
                     DomainName=Ref(s3dnsname),
                     S3OriginConfig=S3Origin(OriginAccessIdentity="")),
 
-                Origin(Id=Ref(origin_2), 
-                    DomainName=Ref(dnsname_2),
+                Origin(Id=Ref(origin_account), 
+                    DomainName=Ref(dns_account),
                     CustomOriginConfig=CustomOrigin(
 		        HTTPPort="80",
 		        HTTPSPort="443",
 		        OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_3),
-                    DomainName=Ref(dnsname_3),
+                Origin(Id=Ref(origin_report),
+                    DomainName=Ref(dns_report),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_4),
-                    DomainName=Ref(dnsname_4),
+                Origin(Id=Ref(origin_alerts),
+                    DomainName=Ref(dns_alerts),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_5),
-                    DomainName=Ref(dnsname_5),
+                Origin(Id=Ref(origin_benefits),
+                    DomainName=Ref(dns_benefits),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_6),
-                    DomainName=Ref(dnsname_6),
+                Origin(Id=Ref(origin_enrollment),
+                    DomainName=Ref(dns_enrollment),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_7),
-                    DomainName=Ref(dnsname_7),
+                Origin(Id=Ref(origin_fulfillment),
+                    DomainName=Ref(dns_fulfillment),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_8),
-                    DomainName=Ref(dnsname_8),
+                Origin(Id=Ref(origin_offers),
+                    DomainName=Ref(dns_offers),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_9),
-                    DomainName=Ref(dnsname_9),
+                Origin(Id=Ref(origin_profile),
+                    DomainName=Ref(dns_profile),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
                         OriginProtocolPolicy="http-only")),
 
-                Origin(Id=Ref(origin_10),
-                    DomainName=Ref(dnsname_10),
+                Origin(Id=Ref(origin_registration),
+                    DomainName=Ref(dns_registration),
                     CustomOriginConfig=CustomOrigin(
                         HTTPPort="80",
                         HTTPSPort="443",
@@ -173,64 +211,64 @@ myDistribution = t.add_resource(Distribution(
 
                 CacheBehaviors=(
                     [CacheBehavior(
-                        PathPattern="/api/account",
-                        TargetOriginId=Ref(origin_2),
+                        PathPattern=Ref(behavior_account),
+                        TargetOriginId=Ref(origin_account),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/report",
-                        TargetOriginId=Ref(origin_3),
+                        PathPattern=Ref(behavior_report),
+                        TargetOriginId=Ref(origin_report),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/alerts",
-                        TargetOriginId=Ref(origin_4),
+                        PathPattern=Ref(behavior_alerts),
+                        TargetOriginId=Ref(origin_alerts),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/benefits",
-                        TargetOriginId=Ref(origin_5),
+                        PathPattern=Ref(behavior_benefits),
+                        TargetOriginId=Ref(origin_benefits),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/enrollment",
-                        TargetOriginId=Ref(origin_6),
+                        PathPattern=Ref(behavior_enrollment),
+                        TargetOriginId=Ref(origin_enrollment),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/fulfillment",
-                        TargetOriginId=Ref(origin_7),
+                        PathPattern=Ref(behavior_fulfillment),
+                        TargetOriginId=Ref(origin_fulfillment),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/offers",
-                        TargetOriginId=Ref(origin_8),
+                        PathPattern=Ref(behavior_offers),
+                        TargetOriginId=Ref(origin_offers),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/profile",
-                        TargetOriginId=Ref(origin_9),
+                        PathPattern=Ref(behavior_profile),
+                        TargetOriginId=Ref(origin_profile),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")
                     ),
                     CacheBehavior(
-                        PathPattern="/api/registration",
-                        TargetOriginId=Ref(origin_10),
+                        PathPattern=Ref(behavior_registration),
+                        TargetOriginId=Ref(origin_registration),
                         ViewerProtocolPolicy="allow-all",
                         ForwardedValues=ForwardedValues(
                         QueryString="true")

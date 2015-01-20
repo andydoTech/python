@@ -35,58 +35,85 @@
             "Description": "Alternate Domain Names (CNAMEs)",
             "Type": "String"
         },
-        "dnsEIGHT": {
+        "behaviorACCOUNT": {
             "Type": "String"
         },
-        "dnsFIVE": {
+        "behaviorALERTS": {
             "Type": "String"
         },
-        "dnsFOUR": {
+        "behaviorBENEFITS": {
             "Type": "String"
         },
-        "dnsNINE": {
+        "behaviorENROLLMENT": {
             "Type": "String"
         },
-        "dnsSEVEN": {
+        "behaviorFULFILLMENT": {
             "Type": "String"
         },
-        "dnsSIX": {
+        "behaviorOFFERS": {
             "Type": "String"
         },
-        "dnsTEN": {
+        "behaviorPROFILE": {
             "Type": "String"
         },
-        "dnsTHREE": {
+        "behaviorREGISTRATION": {
             "Type": "String"
         },
-        "dnsTWO": {
+        "behaviorREPORT": {
             "Type": "String"
         },
-        "originEIGHT": {
+        "dnsACCOUNT": {
             "Type": "String"
         },
-        "originFIVE": {
+        "dnsALERTS": {
             "Type": "String"
         },
-        "originFOUR": {
+        "dnsBENEFITS": {
             "Type": "String"
         },
-        "originNINE": {
+        "dnsENROLLMENT": {
             "Type": "String"
         },
-        "originSEVEN": {
+        "dnsFULFILLMENT": {
             "Type": "String"
         },
-        "originSIX": {
+        "dnsOFFERS": {
             "Type": "String"
         },
-        "originTEN": {
+        "dnsPROFILE": {
             "Type": "String"
         },
-        "originTHREE": {
+        "dnsREGISTRATION": {
             "Type": "String"
         },
-        "originTWO": {
+        "dnsREPORT": {
+            "Type": "String"
+        },
+        "originACCOUNT": {
+            "Type": "String"
+        },
+        "originALERTS": {
+            "Type": "String"
+        },
+        "originBENEFITS": {
+            "Type": "String"
+        },
+        "originENROLLMENT": {
+            "Type": "String"
+        },
+        "originFULFILLMENT": {
+            "Type": "String"
+        },
+        "originOFFERS": {
+            "Type": "String"
+        },
+        "originPROFILE": {
+            "Type": "String"
+        },
+        "originREGISTRATION": {
+            "Type": "String"
+        },
+        "originREPORT": {
             "Type": "String"
         }
     },
@@ -104,9 +131,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/account",
+                            "PathPattern": {
+                                "Ref": "behaviorACCOUNT"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originTWO"
+                                "Ref": "originACCOUNT"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -114,9 +143,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/report",
+                            "PathPattern": {
+                                "Ref": "behaviorREPORT"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originTHREE"
+                                "Ref": "originREPORT"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -124,9 +155,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/alerts",
+                            "PathPattern": {
+                                "Ref": "behaviorALERTS"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originFOUR"
+                                "Ref": "originALERTS"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -134,9 +167,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/benefits",
+                            "PathPattern": {
+                                "Ref": "behaviorBENEFITS"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originFIVE"
+                                "Ref": "originBENEFITS"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -144,9 +179,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/enrollment",
+                            "PathPattern": {
+                                "Ref": "behaviorENROLLMENT"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originSIX"
+                                "Ref": "originENROLLMENT"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -154,9 +191,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/fulfillment",
+                            "PathPattern": {
+                                "Ref": "behaviorFULFILLMENT"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originSEVEN"
+                                "Ref": "originFULFILLMENT"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -164,9 +203,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/offers",
+                            "PathPattern": {
+                                "Ref": "behaviorOFFERS"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originEIGHT"
+                                "Ref": "originOFFERS"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -174,9 +215,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/profile",
+                            "PathPattern": {
+                                "Ref": "behaviorPROFILE"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originNINE"
+                                "Ref": "originPROFILE"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         },
@@ -184,9 +227,11 @@
                             "ForwardedValues": {
                                 "QueryString": "true"
                             },
-                            "PathPattern": "/api/registration",
+                            "PathPattern": {
+                                "Ref": "behaviorREGISTRATION"
+                            },
                             "TargetOriginId": {
-                                "Ref": "originTEN"
+                                "Ref": "originREGISTRATION"
                             },
                             "ViewerProtocolPolicy": "allow-all"
                         }
@@ -220,10 +265,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsTWO"
+                                "Ref": "dnsACCOUNT"
                             },
                             "Id": {
-                                "Ref": "originTWO"
+                                "Ref": "originACCOUNT"
                             }
                         },
                         {
@@ -233,10 +278,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsTHREE"
+                                "Ref": "dnsREPORT"
                             },
                             "Id": {
-                                "Ref": "originTHREE"
+                                "Ref": "originREPORT"
                             }
                         },
                         {
@@ -246,10 +291,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsFOUR"
+                                "Ref": "dnsALERTS"
                             },
                             "Id": {
-                                "Ref": "originFOUR"
+                                "Ref": "originALERTS"
                             }
                         },
                         {
@@ -259,10 +304,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsFIVE"
+                                "Ref": "dnsBENEFITS"
                             },
                             "Id": {
-                                "Ref": "originFIVE"
+                                "Ref": "originBENEFITS"
                             }
                         },
                         {
@@ -272,10 +317,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsSIX"
+                                "Ref": "dnsENROLLMENT"
                             },
                             "Id": {
-                                "Ref": "originSIX"
+                                "Ref": "originENROLLMENT"
                             }
                         },
                         {
@@ -285,10 +330,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsSEVEN"
+                                "Ref": "dnsFULFILLMENT"
                             },
                             "Id": {
-                                "Ref": "originSEVEN"
+                                "Ref": "originFULFILLMENT"
                             }
                         },
                         {
@@ -298,10 +343,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsEIGHT"
+                                "Ref": "dnsOFFERS"
                             },
                             "Id": {
-                                "Ref": "originEIGHT"
+                                "Ref": "originOFFERS"
                             }
                         },
                         {
@@ -311,10 +356,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsNINE"
+                                "Ref": "dnsPROFILE"
                             },
                             "Id": {
-                                "Ref": "originNINE"
+                                "Ref": "originPROFILE"
                             }
                         },
                         {
@@ -324,10 +369,10 @@
                                 "OriginProtocolPolicy": "http-only"
                             },
                             "DomainName": {
-                                "Ref": "dnsTEN"
+                                "Ref": "dnsREGISTRATION"
                             },
                             "Id": {
-                                "Ref": "originTEN"
+                                "Ref": "originREGISTRATION"
                             }
                         }
                     ]
