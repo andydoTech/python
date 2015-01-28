@@ -1,5 +1,5 @@
-from troposphere import Base64, FindInMap, GetAtt
-from troposphere import Parameter, Output, Ref, Template, Tags
+from troposphere import Base64, FindInMap, GetAtt, Select, GetAZs, Join
+from troposphere import Parameter, Output, Ref, Template, Tags, Condition, Equals
 from troposphere.s3 import Bucket, AuthenticatedRead
 from troposphere.dynamodb import (Key, AttributeDefinition, ProvisionedThroughput)
 from troposphere.dynamodb import Table
@@ -14,12 +14,24 @@ from troposphere.ec2 import PortRange, NetworkAcl, Route, \
 import troposphere.ec2 as ec2
 
 t = Template()
+t.add_mapping('RegionMap', {
+    "us-east-1": {"AMI": "ami-c4fe9aac"},
+    "us-west-1": {"AMI": "ami-cfa5b68a"},
+    "us-west-2": {"AMI": "ami-29d18719"},
+})
+conditions = {
+    "NoKeyPair": Equals(
+        Ref("KeyPair"),
+        "None"
+    ), 
+}
 
 EC2keyname = t.add_parameter(Parameter(
     "KeyName",
     Description="EC2 KeyPair to enable SSH access to the instance",
     Type="String",
 ))
+
 Repo = t.add_parameter(Parameter(
     "GitRepo",
     Description="Git repository",
@@ -70,10 +82,11 @@ IGW = t.add_parameter(Parameter(
     Description="Internet gateway",
     Type="String",
 ))
-SubnetBlock = t.add_parameter(Parameter(
-   "subnetblock",
-    Description="Subnet block",
-    Type="String",
+SubnetBlocks = t.add_parameter(Parameter(
+   "SubnetBlocks",
+    Description="API CIDR blocks",
+    Type="CommaDelimitedList",
+    Default="10.0.10.0/24, 10.0.11.0/24, 10.0.12.0/24",
 ))
 VPCId = t.add_parameter(Parameter(
     "vpcid",
@@ -142,11 +155,7 @@ ec2InstanceType = t.add_parameter(Parameter(
     ],
     ConstraintDescription="must be a valid EC2 instance type.",
 ))
-NAT = t.add_parameter(Parameter(
-    "NAT",
-    Description="NAT Instance",
-    Type="String",
-))
+
 netServerCapacity = t.add_parameter(Parameter(
    "NETServerCapacity",
     Default="2",
@@ -156,17 +165,6 @@ netServerCapacity = t.add_parameter(Parameter(
     MaxValue="2",
     ConstraintDescription="Must be between 1 and 2 EC2 instances.",
 ))
-ApiSubnet1 = t.add_parameter(Parameter(
-    "ApiSubnet1",
-    Type="String",
-    Description="First private subnet ID for the api load balanhcer.",
-))
-ApiSubnet2 = t.add_parameter(Parameter(
-    "ApiSubnet2",
-    Type="String",
-    Description="Second private subnet ID for the api load balanhcer.",
-))
-
 
 ################ Resources #######################
 s3bucket = t.add_resource(Bucket(
@@ -190,13 +188,38 @@ loggingQueue = t.add_resource(Queue(
     "LoggingQueue"
 ))
 
-subnet = t.add_resource(
+PrivateSubnetA = t.add_resource(
     Subnet(
-        "Subnet",
-        CidrBlock="10.0.0.0/24",
-        VpcId=Ref(VPCId)
+        "PrivateSubnetA",
+        CidrBlock=(Select("0", Ref(SubnetBlocks))),
+        AvailabilityZone=(Select("0", GetAZs(Ref("AWS::Region")))),
+        VpcId=Ref(VPCId),
+        Tags=Tags(
+            Name=(Join(" ", [Ref(EnvType), "Subnet A"])),
+        )
     )
 )
-
+PrivateSubnetB = t.add_resource(
+    Subnet(
+        "PrivateSubnetB",
+        CidrBlock=(Select("1", Ref(SubnetBlocks))),
+        AvailabilityZone=(Select("1", GetAZs(Ref("AWS::Region")))),
+        VpcId=Ref(VPCId),
+        Tags=Tags(
+            Name=(Join(" ", [Ref(EnvType), "Subnet B"])),
+        )
+    )
+)
+PrivateSubnetC = t.add_resource(
+    Subnet(
+        "PrivateSubnetC",
+        CidrBlock=(Select("2", Ref(SubnetBlocks))),
+        AvailabilityZone=(Select("2", GetAZs(Ref("AWS::Region")))),
+        VpcId=Ref(VPCId),
+        Tags=Tags(
+            Name=(Join(" ", [Ref(EnvType), "Subnet C"])),
+        )
+    )
+)
 
 print(t.to_json())
