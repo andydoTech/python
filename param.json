@@ -1,0 +1,205 @@
+{
+    "Parameters": {
+        "AmiId": {
+            "Description": "The AMI id for the api instance",
+            "Type": "String"
+        },
+        "ApiSubnet1": {
+            "Description": "First private subnet ID for the api load balanhcer.",
+            "Type": "String"
+        },
+        "ApiSubnet2": {
+            "Description": "Second private subnet ID for the api load balanhcer.",
+            "Type": "String"
+        },
+        "EnvType": {
+            "Description": "The environment being deployed into",
+            "Type": "String"
+        },
+        "GitBranch": {
+            "Description": "Git branch",
+            "Type": "String"
+        },
+        "GitRepo": {
+            "Description": "Git repository",
+            "Type": "String"
+        },
+        "HasKeyElementName": {
+            "AllowedPattern": "[a-zA-z0-9]*",
+            "ConstraintDescription": "must contain only alphanumberic characters",
+            "Description": "HasType PrimaryKey Name",
+            "MaxLength": "2048",
+            "MinLength": "1",
+            "Type": "String"
+        },
+        "HasKeyElementType": {
+            "AllowedPattern": "[S|N]",
+            "ConstraintDescription": "must be either S or N",
+            "Default": "S",
+            "Description": "HashType PrimaryKey Type",
+            "MaxLength": "1",
+            "MinLength": "1",
+            "Type": "String"
+        },
+        "IGW": {
+            "Description": "Internet gateway",
+            "Type": "String"
+        },
+        "KeyName": {
+            "Description": "EC2 KeyPair to enable SSH access to the instance",
+            "Type": "String"
+        },
+        "NAT": {
+            "Description": "NAT Instance",
+            "Type": "String"
+        },
+        "NETServerCapacity": {
+            "ConstraintDescription": "Must be between 1 and 2 EC2 instances.",
+            "Default": "2",
+            "Description": "The initial number of NETServer instances",
+            "MaxValue": "2",
+            "MinValue": "1",
+            "Type": "Number"
+        },
+        "NetInstanceType": {
+            "AllowedValues": [
+                "t1.micro",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
+                "m1.small",
+                "m1.medium",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge",
+                "m2.2xlarge",
+                "m2.4xlarge",
+                "m3.medium",
+                "m3.large",
+                "m3.xlarge",
+                "m3.2xlarge",
+                "c1.medium",
+                "c1.xlarge",
+                "c3.large",
+                "c3.xlarge",
+                "c3.2xlarge",
+                "c3.4xlarge",
+                "c3.8xlarge",
+                "g2.2xlarge",
+                "r3.large",
+                "r3.xlarge",
+                "r3.2xlarge",
+                "r3.4xlarge",
+                "r3.8xlarge",
+                "i2.xlarge",
+                "i2.2xlarge",
+                "i2.4xlarge",
+                "i2.8xlarge",
+                "hi1.4xlarge",
+                "hs1.8xlarge",
+                "cr1.8xlarge",
+                "cc2.8xlarge",
+                "cg1.4xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type.",
+            "Default": "m1.medium",
+            "Description": "NET EC2 instance type",
+            "Type": "String"
+        },
+        "ReadCapacityUnits": {
+            "ConstraintDescription": "should be between 5 and 10000",
+            "Default": "5",
+            "Description": "Provisioned read throughput",
+            "MaxValue": "10000",
+            "MinValue": "5",
+            "Type": "Number"
+        },
+        "ServiceRegistry": {
+            "Description": "Service registry",
+            "Type": "String"
+        },
+        "Tier": {
+            "Description": "Tier",
+            "Type": "String"
+        },
+        "Version": {
+            "Description": "Version",
+            "Type": "String"
+        },
+        "WriteCapacityUnits": {
+            "ConstraintDescription": "should be between 5 and 10000",
+            "Default": "10",
+            "Description": "Provisioned write throughput",
+            "MaxValue": "10000",
+            "MinValue": "5",
+            "Type": "Number"
+        },
+        "instancesize": {
+            "Description": "Size of an instance",
+            "Type": "String"
+        },
+        "port": {
+            "Description": "Port",
+            "Type": "String"
+        },
+        "subnetblock": {
+            "Description": "Subnet block",
+            "Type": "String"
+        },
+        "vpcid": {
+            "Description": "VPC Id",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "DynamoConfigTable": {
+            "Properties": {
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": {
+                            "Ref": "HasKeyElementName"
+                        },
+                        "AttributeType": {
+                            "Ref": "HasKeyElementType"
+                        }
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": {
+                            "Ref": "HasKeyElementName"
+                        },
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": {
+                        "Ref": "ReadCapacityUnits"
+                    },
+                    "WriteCapacityUnits": {
+                        "Ref": "WriteCapacityUnits"
+                    }
+                }
+            },
+            "Type": "AWS::DynamoDB::Table"
+        },
+        "LoggingQueue": {
+            "Type": "AWS::SQS::Queue"
+        },
+        "S3Bucket": {
+            "Properties": {
+                "AccessControl": "AuthenticatedRead"
+            },
+            "Type": "AWS::S3::Bucket"
+        },
+        "Subnet": {
+            "Properties": {
+                "CidrBlock": "10.0.0.0/24",
+                "VpcId": {
+                    "Ref": "vpcid"
+                }
+            },
+            "Type": "AWS::EC2::Subnet"
+        }
+    }
+}
