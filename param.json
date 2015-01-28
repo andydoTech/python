@@ -1,15 +1,20 @@
 {
+    "Mappings": {
+        "RegionMap": {
+            "us-east-1": {
+                "AMI": "ami-c4fe9aac"
+            },
+            "us-west-1": {
+                "AMI": "ami-cfa5b68a"
+            },
+            "us-west-2": {
+                "AMI": "ami-29d18719"
+            }
+        }
+    },
     "Parameters": {
         "AmiId": {
             "Description": "The AMI id for the api instance",
-            "Type": "String"
-        },
-        "ApiSubnet1": {
-            "Description": "First private subnet ID for the api load balanhcer.",
-            "Type": "String"
-        },
-        "ApiSubnet2": {
-            "Description": "Second private subnet ID for the api load balanhcer.",
             "Type": "String"
         },
         "EnvType": {
@@ -47,10 +52,6 @@
         },
         "KeyName": {
             "Description": "EC2 KeyPair to enable SSH access to the instance",
-            "Type": "String"
-        },
-        "NAT": {
-            "Description": "NAT Instance",
             "Type": "String"
         },
         "NETServerCapacity": {
@@ -118,6 +119,11 @@
             "Description": "Service registry",
             "Type": "String"
         },
+        "SubnetBlocks": {
+            "Default": "10.0.10.0/24, 10.0.11.0/24, 10.0.12.0/24",
+            "Description": "API CIDR blocks",
+            "Type": "CommaDelimitedList"
+        },
         "Tier": {
             "Description": "Tier",
             "Type": "String"
@@ -140,10 +146,6 @@
         },
         "port": {
             "Description": "Port",
-            "Type": "String"
-        },
-        "subnetblock": {
-            "Description": "Subnet block",
             "Type": "String"
         },
         "vpcid": {
@@ -186,20 +188,137 @@
         "LoggingQueue": {
             "Type": "AWS::SQS::Queue"
         },
-        "S3Bucket": {
+        "PrivateSubnetA": {
             "Properties": {
-                "AccessControl": "AuthenticatedRead"
-            },
-            "Type": "AWS::S3::Bucket"
-        },
-        "Subnet": {
-            "Properties": {
-                "CidrBlock": "10.0.0.0/24",
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::GetAZs": {
+                                "Ref": "AWS::Region"
+                            }
+                        }
+                    ]
+                },
+                "CidrBlock": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Ref": "SubnetBlocks"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                " ",
+                                [
+                                    {
+                                        "Ref": "EnvType"
+                                    },
+                                    "Subnet A"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "VpcId": {
                     "Ref": "vpcid"
                 }
             },
             "Type": "AWS::EC2::Subnet"
+        },
+        "PrivateSubnetB": {
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Fn::GetAZs": {
+                                "Ref": "AWS::Region"
+                            }
+                        }
+                    ]
+                },
+                "CidrBlock": {
+                    "Fn::Select": [
+                        "1",
+                        {
+                            "Ref": "SubnetBlocks"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                " ",
+                                [
+                                    {
+                                        "Ref": "EnvType"
+                                    },
+                                    "Subnet B"
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "vpcid"
+                }
+            },
+            "Type": "AWS::EC2::Subnet"
+        },
+        "PrivateSubnetC": {
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "2",
+                        {
+                            "Fn::GetAZs": {
+                                "Ref": "AWS::Region"
+                            }
+                        }
+                    ]
+                },
+                "CidrBlock": {
+                    "Fn::Select": [
+                        "2",
+                        {
+                            "Ref": "SubnetBlocks"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                " ",
+                                [
+                                    {
+                                        "Ref": "EnvType"
+                                    },
+                                    "Subnet C"
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "vpcid"
+                }
+            },
+            "Type": "AWS::EC2::Subnet"
+        },
+        "S3Bucket": {
+            "Properties": {
+                "AccessControl": "AuthenticatedRead"
+            },
+            "Type": "AWS::S3::Bucket"
         }
     }
 }
