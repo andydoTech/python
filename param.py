@@ -28,14 +28,9 @@ conditions = {
         "None"
     ), 
 }
-LBSecurityGroup = t.add_parameter(Parameter(
-    "LBSecurityGroup",
-    Type="String",
-    Description="Load Balancer Security group for NET instances",
-))
 ScaleCapacity = t.add_parameter(Parameter(
     "ScaleCapacity",
-    Default="1",
+    Default="3",
     Type="String",
     Description="Number of NET servers to run",
 ))
@@ -166,16 +161,6 @@ ec2InstanceType = t.add_parameter(Parameter(
         'cg1.4xlarge',
     ],
     ConstraintDescription="must be a valid EC2 instance type.",
-))
-
-netServerCapacity = t.add_parameter(Parameter(
-   "NETServerCapacity",
-    Default="2",
-    Description="The initial number of NETServer instances",
-    Type="Number",
-    MinValue="1",
-    MaxValue="2",
-    ConstraintDescription="Must be between 1 and 2 EC2 instances.",
 ))
 
 ################ Resources #######################

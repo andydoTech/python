@@ -54,18 +54,6 @@
             "Description": "EC2 KeyPair to enable SSH access to the instance",
             "Type": "String"
         },
-        "LBSecurityGroup": {
-            "Description": "Load Balancer Security group for NET instances",
-            "Type": "String"
-        },
-        "NETServerCapacity": {
-            "ConstraintDescription": "Must be between 1 and 2 EC2 instances.",
-            "Default": "2",
-            "Description": "The initial number of NETServer instances",
-            "MaxValue": "2",
-            "MinValue": "1",
-            "Type": "Number"
-        },
         "NetInstanceType": {
             "AllowedValues": [
                 "t1.micro",
@@ -120,7 +108,7 @@
             "Type": "Number"
         },
         "ScaleCapacity": {
-            "Default": "1",
+            "Default": "3",
             "Description": "Number of NET servers to run",
             "Type": "String"
         },
