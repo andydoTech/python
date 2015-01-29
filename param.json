@@ -2,21 +2,17 @@
     "Mappings": {
         "RegionMap": {
             "us-east-1": {
-                "AMI": "ami-c4fe9aac"
+                "windows2012r2BaseAmiId": "ami-904be6f8"
             },
             "us-west-1": {
-                "AMI": "ami-cfa5b68a"
+                "windows2012r2BaseAmiId": "ami-09626b4c"
             },
             "us-west-2": {
-                "AMI": "ami-29d18719"
+                "windows2012r2BaseAmiId": "ami-d38dcce3"
             }
         }
     },
     "Parameters": {
-        "AmiId": {
-            "Description": "The AMI id for the api instance",
-            "Type": "String"
-        },
         "EnvType": {
             "Description": "The environment being deployed into",
             "Type": "String"
@@ -50,11 +46,7 @@
             "Description": "Internet gateway",
             "Type": "String"
         },
-        "KeyName": {
-            "Description": "EC2 KeyPair to enable SSH access to the instance",
-            "Type": "String"
-        },
-        "NetInstanceType": {
+        "InstanceType": {
             "AllowedValues": [
                 "t1.micro",
                 "t2.micro",
@@ -97,6 +89,10 @@
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Default": "m1.medium",
             "Description": "NET EC2 instance type",
+            "Type": "String"
+        },
+        "KeyName": {
+            "Description": "EC2 KeyPair to enable SSH access to the instance",
             "Type": "String"
         },
         "ReadCapacityUnits": {
@@ -252,6 +248,48 @@
                 ]
             },
             "Type": "AWS::EC2::InternetGateway"
+        },
+        "PrivateLC": {
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "windows2012r2BaseAmiId"
+                    ]
+                },
+                "InstanceMonitoring": "false",
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "<powershell>",
+                                "Set-ExecutionPolicy unrestricted -force",
+                                "Import-Module ServerManager",
+                                "function Expand-ZIPFile($file, $destination)",
+                                "{",
+                                "    $shell = new-object -com shell.application",
+                                "    $zip = $shell.NameSpace($file)",
+                                "    foreach($item in $zip.items())",
+                                "    {",
+                                "    $shell.Namespace($destination).copyhere($item)",
+                                "    }",
+                                "}",
+                                "",
+                                "$IISFeatures = @(\"Web-Static-Content\", \"Web-Default-Doc\",\"Web-Http-Errors\", \"Web-Asp-Net\", \"Web-Asp-Net45\", \"Web-Net-Ext\", \"Web-ISAPI-Ext\", \"Web-ISAPI-Filter\", \"Web-Http-Logging\", \"Web-Log-Libraries\", \"Web-Request-Monitor\", \"Web-Http-Tracing\", \"Web-Windows-Auth\", \"Web-Filtering\", \"Web-IP-Security\", \"Web-Stat-Compression\", \"Web-Dyn-Compression\", \"Web-Mgmt-Console\", \"Web-Scripting-Tools\", \"Web-Metabase\", \"Web-WMI\", \"Web-Lgcy-Scripting\",\"NET-Framework-Core\")",
+                                "Add-WindowsFeature -Name $IISfeatures -logPath \"$Env:ComputerName.log\""
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::AutoScaling::LaunchConfiguration"
         },
         "PrivateRouteTable": {
             "Properties": {

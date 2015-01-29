@@ -18,9 +18,9 @@ import troposphere.ec2 as ec2
 
 t = Template()
 t.add_mapping('RegionMap', {
-    "us-east-1": {"AMI": "ami-c4fe9aac"},
-    "us-west-1": {"AMI": "ami-cfa5b68a"},
-    "us-west-2": {"AMI": "ami-29d18719"},
+    "us-east-1": {"windows2012r2BaseAmiId": "ami-904be6f8"},
+    "us-west-1": {"windows2012r2BaseAmiId": "ami-09626b4c"},
+    "us-west-2": {"windows2012r2BaseAmiId": "ami-d38dcce3"},
 })
 conditions = {
     "NoKeyPair": Equals(
@@ -72,11 +72,6 @@ Version = t.add_parameter(Parameter(
 Port = t.add_parameter(Parameter(
     "port",
     Description="Port",
-    Type="String",
-))
-AmiId = t.add_parameter(Parameter(
-    "AmiId",
-    Description="The AMI id for the api instance",
     Type="String",
 ))
 InstanceSize = t.add_parameter(Parameter(
@@ -138,8 +133,8 @@ writeunits = t.add_parameter(Parameter(
     MaxValue="10000",
     ConstraintDescription="should be between 5 and 10000"
 ))
-ec2InstanceType = t.add_parameter(Parameter(
-    "NetInstanceType",
+InstanceType = t.add_parameter(Parameter(
+    "InstanceType",
     Description="NET EC2 instance type",
     Type="String",
     Default="m1.medium",
@@ -257,15 +252,27 @@ PrivateELB = t.add_resource(LoadBalancer(
         )
     ]
 ))
-
-
-
-
-
-
-
-
-
-
-
+PrivateLC = t.add_resource(LaunchConfiguration(
+    "PrivateLC",
+    InstanceType=Ref("InstanceType"),    
+    ImageId=FindInMap("RegionMap", Ref("AWS::Region"), "windows2012r2BaseAmiId"),
+    InstanceMonitoring = False,
+    UserData=Base64(Join('', [
+    "<powershell>", 
+    "Set-ExecutionPolicy unrestricted -force", 
+    "Import-Module ServerManager", 
+    "function Expand-ZIPFile($file, $destination)", 
+    "{", 
+    "    $shell = new-object -com shell.application", 
+    "    $zip = $shell.NameSpace($file)", 
+    "    foreach($item in $zip.items())", 
+    "    {", 
+    "    $shell.Namespace($destination).copyhere($item)", 
+    "    }", 
+    "}", 
+    "", 
+    "$IISFeatures = @(\"Web-Static-Content\", \"Web-Default-Doc\",\"Web-Http-Errors\", \"Web-Asp-Net\", \"Web-Asp-Net45\", \"Web-Net-Ext\", \"Web-ISAPI-Ext\", \"Web-ISAPI-Filter\", \"Web-Http-Logging\", \"Web-Log-Libraries\", \"Web-Request-Monitor\", \"Web-Http-Tracing\", \"Web-Windows-Auth\", \"Web-Filtering\", \"Web-IP-Security\", \"Web-Stat-Compression\", \"Web-Dyn-Compression\", \"Web-Mgmt-Console\", \"Web-Scripting-Tools\", \"Web-Metabase\", \"Web-WMI\", \"Web-Lgcy-Scripting\",\"NET-Framework-Core\")", 
+    "Add-WindowsFeature -Name $IISfeatures -logPath \"$Env:ComputerName.log\"", 
+    ])),
+))
 print(t.to_json())
