@@ -54,6 +54,10 @@
             "Description": "EC2 KeyPair to enable SSH access to the instance",
             "Type": "String"
         },
+        "LBSecurityGroup": {
+            "Description": "Load Balancer Security group for NET instances",
+            "Type": "String"
+        },
         "NETServerCapacity": {
             "ConstraintDescription": "Must be between 1 and 2 EC2 instances.",
             "Default": "2",
@@ -115,6 +119,11 @@
             "MinValue": "5",
             "Type": "Number"
         },
+        "ScaleCapacity": {
+            "Default": "1",
+            "Description": "Number of NET servers to run",
+            "Type": "String"
+        },
         "ServiceRegistry": {
             "Description": "Service registry",
             "Type": "String"
@@ -126,6 +135,10 @@
         },
         "Tier": {
             "Description": "Tier",
+            "Type": "String"
+        },
+        "VPC": {
+            "Description": "VPC Id",
             "Type": "String"
         },
         "Version": {
@@ -147,13 +160,20 @@
         "port": {
             "Description": "Port",
             "Type": "String"
-        },
-        "vpcid": {
-            "Description": "VPC Id",
-            "Type": "String"
         }
     },
     "Resources": {
+        "AttachGateway": {
+            "Properties": {
+                "InternetGatewayId": {
+                    "Ref": "PrivateIGW"
+                },
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::VPCGatewayAttachment"
+        },
         "DynamoConfigTable": {
             "Properties": {
                 "AttributeDefinitions": [
@@ -187,6 +207,71 @@
         },
         "LoggingQueue": {
             "Type": "AWS::SQS::Queue"
+        },
+        "PrivateACL": {
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::NetworkAcl"
+        },
+        "PrivateELB": {
+            "Properties": {
+                "CrossZone": "true",
+                "HealthCheck": {
+                    "HealthyThreshold": "5",
+                    "Interval": "20",
+                    "Target": "HTTP:80/",
+                    "Timeout": "15",
+                    "UnhealthyThreshold": "2"
+                },
+                "Listeners": [
+                    {
+                        "InstancePort": "80",
+                        "InstanceProtocol": "HTTP",
+                        "LoadBalancerPort": "80",
+                        "Protocol": "HTTP"
+                    }
+                ],
+                "Scheme": "internal",
+                "SecurityGroups": {
+                    "Ref": "LBSecurityGroup"
+                },
+                "Subnets": [
+                    {
+                        "Ref": "PrivateSubnetA"
+                    },
+                    {
+                        "Ref": "PrivateSubnetB"
+                    },
+                    {
+                        "Ref": "PrivateSubnetC"
+                    }
+                ]
+            },
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+        },
+        "PrivateIGW": {
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Service",
+                        "Value": {
+                            "Ref": "AWS::StackId"
+                        }
+                    }
+                ]
+            },
+            "Type": "AWS::EC2::InternetGateway"
+        },
+        "PrivateRouteTable": {
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::RouteTable"
         },
         "PrivateSubnetA": {
             "Properties": {
@@ -225,7 +310,7 @@
                     }
                 ],
                 "VpcId": {
-                    "Ref": "vpcid"
+                    "Ref": "VPC"
                 }
             },
             "Type": "AWS::EC2::Subnet"
@@ -267,7 +352,7 @@
                     }
                 ],
                 "VpcId": {
-                    "Ref": "vpcid"
+                    "Ref": "VPC"
                 }
             },
             "Type": "AWS::EC2::Subnet"
@@ -309,7 +394,7 @@
                     }
                 ],
                 "VpcId": {
-                    "Ref": "vpcid"
+                    "Ref": "VPC"
                 }
             },
             "Type": "AWS::EC2::Subnet"

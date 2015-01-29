@@ -10,7 +10,10 @@ from troposphere.ec2 import PortRange, NetworkAcl, Route, \
     VPC, NetworkInterfaceProperty, NetworkAclEntry, \
     SubnetNetworkAclAssociation, EIP, Instance, InternetGateway, \
     SecurityGroupRule, SecurityGroup
-
+from troposphere.elasticloadbalancing import LoadBalancer
+from troposphere.autoscaling import AutoScalingGroup, LaunchConfiguration
+import troposphere.elasticloadbalancing as elb
+from troposphere.policies import UpdatePolicy, AutoScalingRollingUpdate
 import troposphere.ec2 as ec2
 
 t = Template()
@@ -25,13 +28,22 @@ conditions = {
         "None"
     ), 
 }
-
+LBSecurityGroup = t.add_parameter(Parameter(
+    "LBSecurityGroup",
+    Type="String",
+    Description="Load Balancer Security group for NET instances",
+))
+ScaleCapacity = t.add_parameter(Parameter(
+    "ScaleCapacity",
+    Default="1",
+    Type="String",
+    Description="Number of NET servers to run",
+))
 EC2keyname = t.add_parameter(Parameter(
     "KeyName",
     Description="EC2 KeyPair to enable SSH access to the instance",
     Type="String",
 ))
-
 Repo = t.add_parameter(Parameter(
     "GitRepo",
     Description="Git repository",
@@ -88,8 +100,8 @@ SubnetBlocks = t.add_parameter(Parameter(
     Type="CommaDelimitedList",
     Default="10.0.10.0/24, 10.0.11.0/24, 10.0.12.0/24",
 ))
-VPCId = t.add_parameter(Parameter(
-    "vpcid",
+VPC = t.add_parameter(Parameter(
+    "VPC",
     Description="VPC Id",
     Type="String",
 ))
@@ -193,7 +205,7 @@ PrivateSubnetA = t.add_resource(
         "PrivateSubnetA",
         CidrBlock=(Select("0", Ref(SubnetBlocks))),
         AvailabilityZone=(Select("0", GetAZs(Ref("AWS::Region")))),
-        VpcId=Ref(VPCId),
+        VpcId=Ref(VPC),
         Tags=Tags(
             Name=(Join(" ", [Ref(EnvType), "Subnet A"])),
         )
@@ -204,7 +216,7 @@ PrivateSubnetB = t.add_resource(
         "PrivateSubnetB",
         CidrBlock=(Select("1", Ref(SubnetBlocks))),
         AvailabilityZone=(Select("1", GetAZs(Ref("AWS::Region")))),
-        VpcId=Ref(VPCId),
+        VpcId=Ref(VPC),
         Tags=Tags(
             Name=(Join(" ", [Ref(EnvType), "Subnet B"])),
         )
@@ -215,11 +227,60 @@ PrivateSubnetC = t.add_resource(
         "PrivateSubnetC",
         CidrBlock=(Select("2", Ref(SubnetBlocks))),
         AvailabilityZone=(Select("2", GetAZs(Ref("AWS::Region")))),
-        VpcId=Ref(VPCId),
+        VpcId=Ref(VPC),
         Tags=Tags(
             Name=(Join(" ", [Ref(EnvType), "Subnet C"])),
         )
     )
 )
+PrivateIGW = t.add_resource(InternetGateway(
+    "PrivateIGW",
+    Tags=[{"Key": "Service", "Value": {"Ref": "AWS::StackId"}}]
+))
+GatewayAttachment = t.add_resource(VPCGatewayAttachment(
+    "AttachGateway",
+    VpcId=Ref("VPC"),
+    InternetGatewayId=Ref("PrivateIGW"),
+))
+PrivateACL = t.add_resource(NetworkAcl(
+    "PrivateACL",
+    VpcId=Ref("VPC"),
+))
+PrivateRouteTable = t.add_resource(RouteTable(
+    "PrivateRouteTable",
+    VpcId=Ref("VPC"),
+))
+PrivateELB = t.add_resource(LoadBalancer(
+    "PrivateELB",
+    Subnets = [Ref("PrivateSubnetA"), Ref("PrivateSubnetB"), Ref("PrivateSubnetC")],
+    CrossZone = True,
+    Scheme = "internal",
+    SecurityGroups = Ref("LBSecurityGroup"),
+    HealthCheck=elb.HealthCheck(
+        Target="HTTP:80/",
+        HealthyThreshold="5",
+        UnhealthyThreshold="2",
+        Interval="20",
+        Timeout="15",
+    ),
+    Listeners=[
+        elb.Listener(
+            LoadBalancerPort="80",
+            InstancePort="80",
+            Protocol="HTTP",
+            InstanceProtocol="HTTP",
+        )
+    ]
+))
+
+
+
+
+
+
+
+
+
+
 
 print(t.to_json())
