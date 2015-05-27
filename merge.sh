@@ -1,4 +1,5 @@
 #!/bin/sh
+### Git Merge
 if [ $# -lt 2 ]
 then
    echo "$0 from_branch to_branch"
