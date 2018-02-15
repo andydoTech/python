@@ -7,3 +7,5 @@ services:
 env:
   global:
     - IMAGE_NAME=python
+before_script:
+    - echo "Testing..."
